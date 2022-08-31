@@ -1,30 +1,23 @@
 const express = require("express");
-const Router = express.Router();
+const router = express.Router();
+const users = require("../data/users.js");
+const controllers = require("../controllers/apiControllers");
 
 
-const data = [
-    {
-        username: "Petr",
-        age: 24, 
-        id: 45646,
-        isAdmin: false
-    },
-    {
-        username: "Ptica",
-        age: 28, 
-        id: 4564456,
-        isAdmin: true
-    }
-]
 
-const greetings =  ((req, res, next) => {
+const greetings = ((req, res, next) => {
     console.log(`Blia, kto to sdelal zapros at: ${new Date().toLocaleString()}`);
     next();
 });
 
 
-Router.get("/api", greetings, (req, res) => {
-    res.send(req.headers)
-})
+router.route('/')
+    .get(controllers.getAllUsers)
+    .post(controllers.addNewUser)
+    .put(controllers.updateUser)
+    .delete(controllers.deleteUser);
 
-module.exports = Router;
+router.route('/:id')
+    .get(controllers.getUser);
+
+module.exports = router;
