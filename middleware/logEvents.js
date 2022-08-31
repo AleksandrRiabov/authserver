@@ -15,7 +15,7 @@ const logEvents = async(message, logname) => {
             await fsPromises.mkdir(path.join(__dirname,  "..","logs"));
         }
 
-        await fsPromises.appendFile(path.join(__dirname, "..", "logs", "reqLog.txt"), logItem)
+        await fsPromises.appendFile(path.join(__dirname, "..", "logs", logname), logItem)
     }
     catch(err) {
         console.log(err)
@@ -24,7 +24,7 @@ const logEvents = async(message, logname) => {
 
 
 const logger = ((req, res, next) => {
-    logEvents(`${req.method}\t ${req.headers.origin}\t ${req.url}\t ${req.headers["x-forwarded-for"]}\t ${req.headers["x-forwarded-host"]}`)
+    logEvents(`${req.method}\t ${req.headers.origin}\t ${req.url}\t ${req.headers["x-forwarded-for"]}\t ${req.headers["x-forwarded-host"]}`, "reqLog.txt")
     next()
 })
 
