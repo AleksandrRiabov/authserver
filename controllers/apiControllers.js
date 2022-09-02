@@ -1,6 +1,6 @@
 const data = {
-    users: require("../data/users.js"), 
-    setUsers : function (data){this.users = data}
+    users: require("../data/users.json"),
+    setUsers: function (data) { this.users = data }
 }
 
 
@@ -19,7 +19,7 @@ const addNewUser = (req, res) => {
         username,
         age,
         isAdmin: false,
-        id: Math.floor(Math.random()* 10000) + 1
+        id: Math.floor(Math.random() * 10000) + 1
     }
     data.setUsers([...data.users, newUser])
     res.status(201).json({ message: "New user created", user: newUser })
@@ -27,7 +27,7 @@ const addNewUser = (req, res) => {
 
 const updateUser = ((req, res) => {
 
-    const {username, age, id} = req.body;
+    const { username, age, id } = req.body;
 
     const foundUser = data.users.find(user => user.id === parseInt(id));
 
@@ -38,11 +38,11 @@ const updateUser = ((req, res) => {
     if (username) foundUser.username = username;
     if (age) foundUser.age = age;
 
-    res.status(201).json({"message": "User updated", foundUser})
+    res.status(201).json({ "message": "User updated", foundUser })
 });
 
 const deleteUser = (req, res) => {
-    const {id} = req.body;
+    const { id } = req.body;
 
     const foundUser = data.users.find(user => user.id === parseInt(id));
 
@@ -53,12 +53,12 @@ const deleteUser = (req, res) => {
     const filteredUsers = data.users.filter(user => user.id !== parseInt(id))
     data.setUsers([...filteredUsers])
 
-    res.json({"users" :data.users})
+    res.json({ "users": data.users })
 }
 
 
 const getUser = (req, res) => {
-    const user = users.find(user => user.id == req.params.id);
+    const user = data.users.find(user => user.id == parseInt(req.params.id));
     console.log(req.params.id)
     res.json(user)
 }

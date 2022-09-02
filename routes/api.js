@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const users = require("../data/users.js");
 const controllers = require("../controllers/apiControllers");
 const greetings = require("../middleware/greetings.js");
 
