@@ -17,7 +17,6 @@ const handleLogout = async (req, res) => {
     const foundUser = usersDB.users.find(person => person.refreshToken === refreshToken);
     if (!foundUser) {
         res.clearCookie("jwt", { httpOnly: true });
-        console.log("===========2")
         return res.sendStatus(204);
     }
     // Delete refreshToken
@@ -29,7 +28,6 @@ const handleLogout = async (req, res) => {
         JSON.stringify(usersDB.users)
     );
     res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure: true});
-    console.log("============3")
     return res.sendStatus(204)
 }
 

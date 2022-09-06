@@ -3,7 +3,8 @@ const app = express();
 const path = require("path");
 const { logger } = require("./middleware/logEvents")
 const { errorHandler } = require("./middleware/errorHandler")
-const cors = require("cors")
+const cors = require("cors");
+const corsOptions = require('./config/corsOptions.js');
 const verifyJwt = require("./middleware/verifyJwt.js");
 const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 3001;
@@ -14,11 +15,9 @@ const authRoutes = require("./routes/auth.js");
 const refreshRoutes = require("./routes/refresh.js");
 const logoutRoutes = require("./routes/logout.js");
 
-app.use((req,res,next) => {
-    res.header("Access-Control-Allow-Credentials", true)
-    next()
-})
-app.use(cors())
+// Cross Origin Resource Sharing
+app.use(cors(corsOptions));
+
 app.use(logger);
 app.use(express.json());
 app.use(cookieParser());
