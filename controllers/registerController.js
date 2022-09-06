@@ -12,7 +12,6 @@ const handleNewUser = async (req, res) => {
     if (!user || !pwd) return res.status(400).json({ "message": "Username and password required." });
     //chek for dublicate usernames in db
     const dublicate = usersDB.users.find(person => person.username === user);
-    console.log(dublicate)
     if (dublicate) return res.status(409).json({ "message": "Username is already taken." })
 
     try {

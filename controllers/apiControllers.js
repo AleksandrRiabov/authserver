@@ -38,6 +38,8 @@ const updateUser = ((req, res) => {
     if (username) foundUser.username = username;
     if (age) foundUser.age = age;
 
+    data.setUsers([...data.users, foundUser]);
+    
     res.status(201).json({ "message": "User updated", foundUser })
 });
 
