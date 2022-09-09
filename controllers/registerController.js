@@ -20,9 +20,11 @@ const handleNewUser = async (req, res) => {
         //store new user
         const newUser = {
             username: user,
+            roles: {
+                user: 2001
+            },
             password: hashedpassword,
             id: Math.floor(Math.random() * 100000) + 1,
-            isAdmin: false
         }
 
         usersDB.setUsers([...usersDB.users, newUser]);

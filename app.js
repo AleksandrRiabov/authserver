@@ -36,10 +36,10 @@ app.all("*", (req, res) => {
     res.status(404);
     if (req.accepts("html")) {
         // 404 page can be added to views directory and respond with that
-        res.send("Page not found")
+       return res.send("Page not found")
     }
     if (req.accepts("json")) {
-        res.json({ err: "404 Not Found" })
+       return res.json({ err: "404 Not Found" })
     }
 })
 
