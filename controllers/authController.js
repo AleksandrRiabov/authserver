@@ -1,26 +1,20 @@
-const usersDB = {
-    users: require("../data/users.json"),
-    setUsers: function (data) { this.users = data }
-}
+const User = require('../model/User.js');
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const fsPromises = require("fs").promises;
-const path = require("path")
 
 const handleLogin = async (req, res) => {
     const { user, pwd } = req.body;
     if (!user || !pwd) return res.status(400).json({ "message": "Username and password required." });
-    const foundUser = usersDB.users.find(person => person.username === user);
+    const foundUser = await User.findOne({ username: user }).exec();
     if (!foundUser) return res.status(401).json({ "message": "Incorrect username or password." }) //Unauthorised
     //Evaluet password
-    const match = await bcrypt.compare(pwd, foundUser.password)
+    const match = await bcrypt.compare(pwd, foundUser.password);
     if (match) {
         const roles = Object.values(foundUser.roles);
         //create JWTs
         const accessToken = jwt.sign(
-            { "UserInfo": {"username": foundUser.username, "roles": roles} },
+            { "UserInfo": { "username": foundUser.username, "roles": roles } },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '120s' }
         );
@@ -29,17 +23,17 @@ const handleLogin = async (req, res) => {
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
-        
+
         //saving refresh token with current user
-        const otherUseres = usersDB.users.filter(person => person.username !== foundUser.username)
-        const currentUser = { ...foundUser, refreshToken };
-        usersDB.setUsers([...otherUseres, currentUser]);
-        await fsPromises.writeFile(
-            path.join(__dirname, "..", "data", "users.json"),
-            JSON.stringify(usersDB.users)
-        )
-        res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 })
-        return res.status(200).json({ accessToken })
+        try {
+            foundUser.refreshToken = refreshToken;
+            await foundUser.save();
+            res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 })
+            return res.status(200).json({ accessToken });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ "message": error }) //Could not save to DB
+        }
     } else {
         return res.status(401).json({ "message": "Incorrect username or password." }) //Unauthorised
     }

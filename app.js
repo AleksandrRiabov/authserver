@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -9,11 +10,16 @@ const verifyJwt = require("./middleware/verifyJwt.js");
 const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 3001;
 
-const apiRoutes = require("./routes/api.js");
+const employeesRoutes = require("./routes/api/employees.js");
 const registerRoutes = require('./routes/register.js');
 const authRoutes = require("./routes/auth.js");
 const refreshRoutes = require("./routes/refresh.js");
 const logoutRoutes = require("./routes/logout.js");
+const mongoose = require("mongoose");
+const connectDb = require("./config/dbConn.js");
+
+// Connect to DB 
+connectDb()
 
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
@@ -30,20 +36,22 @@ app.use('/logout', logoutRoutes);
 
 
 app.use(verifyJwt);
-app.use("/", apiRoutes);
+app.use("/", employeesRoutes);
 
 app.all("*", (req, res) => {
     res.status(404);
     if (req.accepts("html")) {
         // 404 page can be added to views directory and respond with that
-       return res.send("Page not found")
+        return res.send("Page not found")
     }
     if (req.accepts("json")) {
-       return res.json({ err: "404 Not Found" })
+        return res.json({ err: "404 Not Found" })
     }
 })
 
 app.use(errorHandler)
 
-
-app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
+mongoose.connection.once("open", () => {
+    console.log("Connected to MongoDB")
+    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
+})

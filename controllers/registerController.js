@@ -1,17 +1,11 @@
-const usersDB = {
-    users: require("../data/users.json"),
-    setUsers: function (data) { this.users = data }
-}
-
-const fsPromises = require('fs').promises;
-const path = require('path');
+const User = require("../model/User.js");
 const bcrypt = require('bcrypt');
 
 const handleNewUser = async (req, res) => {
     const { user, pwd } = req.body;
     if (!user || !pwd) return res.status(400).json({ "message": "Username and password required." });
     //chek for dublicate usernames in db
-    const dublicate = usersDB.users.find(person => person.username === user);
+    const dublicate = await User.findOne({ username: user }).exec();
     if (dublicate) return res.status(409).json({ "message": "Username is already taken." })
 
     try {
@@ -20,20 +14,13 @@ const handleNewUser = async (req, res) => {
         //store new user
         const newUser = {
             username: user,
-            roles: {
-                user: 2001
-            },
             password: hashedpassword,
-            id: Math.floor(Math.random() * 100000) + 1,
         }
 
-        usersDB.setUsers([...usersDB.users, newUser]);
-        await fsPromises.writeFile(
-            path.join(__dirname, "..", "data", "users.json"),
-            JSON.stringify(usersDB.users)
-        )
+        const createdUser = await User.create(newUser);
 
-        res.status(201).json({ "message": "New user added", user: newUser })
+        const { password, ...userResponse } = createdUser._doc;
+        res.status(201).json({ "message": "New user added", user: { userResponse } })
 
     } catch (error) {
         return res.status(500).json({ "message": error.message })
