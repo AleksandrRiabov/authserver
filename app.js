@@ -15,6 +15,7 @@ const registerRoutes = require('./routes/register.js');
 const authRoutes = require("./routes/auth.js");
 const refreshRoutes = require("./routes/refresh.js");
 const logoutRoutes = require("./routes/logout.js");
+const usersRoutes = require("./routes/api/users.js");
 const mongoose = require("mongoose");
 const connectDb = require("./config/dbConn.js");
 
@@ -36,7 +37,8 @@ app.use('/logout', logoutRoutes);
 
 
 app.use(verifyJwt);
-app.use("/", employeesRoutes);
+app.use("/employees", employeesRoutes);
+app.use("/users", usersRoutes);
 
 app.all("*", (req, res) => {
     res.status(404);

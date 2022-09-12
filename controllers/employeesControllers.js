@@ -62,13 +62,13 @@ const getEmployee = async (req, res) => {
     if (!id) return res.status(400).json({ "message": "Id is required" });
 
     try {
-        const employee = await Employee.findOne({_id: id}).exec();
-        if (!employee) return res.status(204).json({"message": `No employees matches the ID: ${id}` })
+        const employee = await Employee.findOne({ _id: id }).exec();
+        if (!employee) return res.status(204).json({ "message": `No employees matches the ID: ${id}` })
         res.json(employee);
-    }catch(err){
+    } catch (err) {
         console.error(err);
-        res.status(500).json({"message": err.message})
+        res.status(500).json({ "message": err.message })
     }
-    
+
 }
-module.exports = { getAllEmployees, addNewEmployee, updateEmployee  , deleteEmployee, getEmployee }
+module.exports = { getAllEmployees, addNewEmployee, updateEmployee, deleteEmployee, getEmployee }
