@@ -20,7 +20,7 @@ const mongoose = require("mongoose");
 const connectDb = require("./config/dbConn.js");
 
 // Connect to DB 
-connectDb()
+connectDb();
 
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));

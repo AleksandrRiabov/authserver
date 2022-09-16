@@ -11,7 +11,7 @@ const handleLogin = async (req, res) => {
     //Evaluet password
     const match = await bcrypt.compare(pwd, foundUser.password);
     if (match) {
-        const roles = Object.values(foundUser.roles);
+        const roles = Object.values(foundUser.roles).filter(Boolean);
         //create JWTs
         const accessToken = jwt.sign(
             { "UserInfo": { "username": foundUser.username, "roles": roles } },
@@ -29,7 +29,7 @@ const handleLogin = async (req, res) => {
             foundUser.refreshToken = refreshToken;
             await foundUser.save();
             res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 })
-            return res.status(200).json({ accessToken });
+            return res.status(200).json({ accessToken , roles: foundUser.roles});
         } catch (error) {
             console.log(error);
             return res.status(500).json({ "message": error }) //Could not save to DB
